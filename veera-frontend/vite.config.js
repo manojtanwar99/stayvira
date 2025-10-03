@@ -8,10 +8,6 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-      },
-      '/listings': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
       }
     }
   }

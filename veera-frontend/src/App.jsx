@@ -7,7 +7,7 @@ import Listings from './pages/Listings';
 // import Analytics from './pages/Analytics';
 // import Settings from './pages/Settings';
 import { useAuthStore } from './store/authStore';
-import Dashboard from './pages/Dashbaord';
+import Dashboard from './pages/Dashboard';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
