@@ -1,92 +1,132 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import User from '../models/User.js';
 
-// Mock user with proper hashed password
-const mockUser = {
-  id: '1',
-  email: 'admin@veera.com',
-  password: '$2b$10$FhQhwagGVwrMEXXCVp8xS.7pFQfld0MF3DIZwC18sIxARMjREeGVa', // password123
-  name: 'Admin User',
-  role: 'admin'
+// ----------------------------
+// REGISTER CONTROLLER (optional)
+// ----------------------------
+export const register = async (req, res) => {
+  try {
+    const { name, email, password, firstName, lastName, role, image } = req.body;
+
+    if (!email || !password || !name) {
+      return res.status(400).json({ success: false, message: 'Email, password, and name are required' });
+    }
+
+    // Check if user already exists
+    const userName=email;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      userName,
+      role,
+      image,
+      firstName,
+      lastName,
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        userName: newUser.userName,
+        role: newUser.role,
+      },
+    });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 };
 
-// Login Controller
+// ----------------------------
+// LOGIN CONTROLLER
+// ----------------------------
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt:', { email });
 
-    console.log('Login attempt:', { email }); // Don't log passwords!
-
-    // Validation
+    // 1️⃣ Validate
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email and password'
+        message: 'Please provide both email and password',
       });
     }
 
-    // Check if user exists
-    if (email !== mockUser.email) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
+    // 2️⃣ Find user in DB
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Check password with bcrypt
-    const isPasswordValid = await bcrypt.compare(password, mockUser.password);
-    
+    // 3️⃣ Compare password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Generate JWT token
+    // 4️⃣ Generate JWT token
     const token = jwt.sign(
-      { 
-        id: mockUser.id, 
-        email: mockUser.email,
-        role: mockUser.role 
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
       },
       process.env.JWT_SECRET || 'your-secret-key-change-this',
       { expiresIn: '7d' }
     );
 
-    // Send response
+    // 5️⃣ Return success response
     res.status(200).json({
       success: true,
       message: 'Login successful',
       token,
       user: {
-        id: mockUser.id,
-        name: mockUser.name,
-        email: mockUser.email,
-        role: mockUser.role
-      }
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
+        image: user.image || null,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+      },
     });
-
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again later.'
-    });
+    res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
   }
 };
 
-// Logout Controller
+// ----------------------------
+// LOGOUT CONTROLLER
+// ----------------------------
 export const logout = async (req, res) => {
   try {
+    // You can handle token invalidation if needed (e.g., via a blacklist)
     res.status(200).json({
       success: true,
-      message: 'Logout successful'
+      message: 'Logout successful',
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
+    console.error('Logout error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };

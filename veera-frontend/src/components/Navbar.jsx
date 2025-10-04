@@ -13,7 +13,7 @@ import {
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "../store/authStore";
-
+import { getImageUrl } from "../utility/utility";
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -21,6 +21,7 @@ const Navbar = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+
 
   const navigate = useNavigate();
 
@@ -131,7 +132,15 @@ const Navbar = () => {
                 {/* User Menu - Desktop */}
                 <div onClick={() => navigate('/user')}
                 className="hidden sm:flex items-center space-x-3 bg-blue-700/30 rounded-full px-3 py-1.5">
-                  <UserCircleIcon className="w-8 h-8 text-blue-100" />
+                  {user?.image ? (
+                    <img
+                      src={getImageUrl(user.image)}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <UserCircleIcon className="w-8 h-8 text-blue-100" />
+                  )}
                   <div className="hidden lg:block">
                     <p className="text-sm font-medium">
                       {user?.name || "Admin"}

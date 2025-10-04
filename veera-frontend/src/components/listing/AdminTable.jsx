@@ -5,11 +5,12 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/solid";
+import { getImageUrl } from "../../utility/utility";
 
 // Define the base URL for the images. 
 // NOTE: Adjust this if your frontend runs on a different port/domain than your backend.
 // Example: If backend is on http://localhost:5000
-const IMAGE_BASE_URL = "http://localhost:5000"; // Assuming the image path is relative to the root/proxy is set up
+//const IMAGE_BASE_URL = "http://localhost:5000"; // Assuming the image path is relative to the root/proxy is set up
 
 const AdminTable = ({
   listings = [],
@@ -72,10 +73,10 @@ const AdminTable = ({
   }
 
   // --- HELPER FUNCTION TO GET IMAGE URL ---
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return null;
-    return `${IMAGE_BASE_URL}/${imagePath}`; 
-};
+//   const getImageUrl = (imagePath) => {
+//     if (!imagePath) return null;
+//     return `${IMAGE_BASE_URL}/${imagePath}`; 
+// };
 
 
   return (

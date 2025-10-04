@@ -9,6 +9,8 @@ import {
   XMarkIcon 
 } from '@heroicons/react/24/solid';
 
+import { getImageUrl } from "../utility/utility";
+
 const User = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -100,7 +102,28 @@ const fetchUserDetails = async () => {
     formData.append('image', selectedFile);
 
     try {
-      const token = localStorage.getItem('token');
+      // 🚨 1. Retrieve the entire JSON string from local storage 🚨
+      const authStorageString = localStorage.getItem('auth-storage');
+
+       if (!authStorageString) {
+        console.error('No authentication state found in local storage.');
+        setLoading(false);
+        return;
+      }
+      
+      // 2. Parse the JSON string to get the authentication object
+      const authData = JSON.parse(authStorageString);
+      
+      // 🚨 3. Extract the nested token 🚨
+      const token = authData?.state?.token;
+
+      if (!token) {
+        console.error('Token not found in authentication state.');
+        setLoading(false);
+        return;
+      }
+
+
       
       const response = await fetch('http://localhost:5000/api/user/upload-image', {
         method: 'POST',
@@ -139,7 +162,7 @@ const fetchUserDetails = async () => {
     // If it's already a full URL, return as is
     if (imagePath.startsWith('http')) return imagePath;
     // Otherwise, prepend your backend URL
-    return `http://localhost:5000${imagePath}`;
+    return `http://localhost:5000/${imagePath}`;
   };
 
   if (loading) {
@@ -182,9 +205,9 @@ const fetchUserDetails = async () => {
                       alt="Preview" 
                       className="w-full h-full object-cover"
                     />
-                  ) : user.profileImage ? (
+                  ) : user.image ? (
                     <img 
-                      src={getImageUrl(user.profileImage)} 
+                      src={getImageUrl(user.image)} 
                       alt={user.name || user.userName || 'User'}
                       className="w-full h-full object-cover"
                       onError={(e) => {

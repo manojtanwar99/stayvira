@@ -36,13 +36,14 @@ router.get("/profile", authenticateUser, async (req, res) => {
     const userEmail = req.user?.email;
     
     console.log(userEmail);
+    var user = null;
 
     if (userEmail) {
       // If the ID is the problematic "1", search by email instead
-      const user = await User.findOne({ email: userEmail }).select('-password');
+       user = await User.findOne({ email: userEmail }).select('-password');
     } else {
       // For all other users (who should have proper ObjectIds), use findById
-      const user = await User.findById(req.userId).select('-password');
+       user = await User.findById(req.userId).select('-password');
     }
 
 
@@ -111,11 +112,12 @@ router.post("/upload-image", authenticateUser, (req, res) => {
     }
 
     try {
-      const imagePath = `/uploads/${req.file.filename}`;
-      
+      const imagePath = `uploads/${req.file.filename}`;
+      console.log(imagePath);
+      console.log(req.userId);
       const updatedUser = await User.findByIdAndUpdate(
         req.userId,
-        { profileImage: imagePath },
+        { image: imagePath },
         { new: true }
       ).select('-password');
 
