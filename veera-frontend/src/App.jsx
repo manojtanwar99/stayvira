@@ -8,6 +8,7 @@ import Listings from './pages/Listings';
 // import Settings from './pages/Settings';
 import { useAuthStore } from './store/authStore';
 import Dashboard from './pages/Dashboard';
+import UserProfile from './pages/User';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -89,6 +90,15 @@ function App() {
           } 
         />
 
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <UserProfile/>
+              {/* <Settings /> */}
+            </ProtectedRoute>
+          }
+        />
         {/* Redirect root to dashboard */}
         <Route 
           path="/" 

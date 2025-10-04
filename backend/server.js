@@ -6,6 +6,7 @@ import path from "path"; // Required for file path operations
 import { fileURLToPath } from 'url'; // Required for __dirname equivalent in ES modules
 
 import listingRoutes from "./routes/listingRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
@@ -31,6 +32,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -44,6 +47,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // 2. API ROUTES (MUST COME BEFORE STATIC FILES)
 // ------------------------------------------
 app.use("/api/listings", listingRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api", authRoutes);
 
 

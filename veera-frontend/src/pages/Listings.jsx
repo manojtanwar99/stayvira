@@ -30,11 +30,34 @@ const Listings = () => {
     setOpen(true);
   };
 
-  const handleSave = async (listing) => {
-    if (listing._id) await updateListing(listing._id, listing);
-    else await addListing(listing);
-    setOpen(false);
-  };
+// In your parent component (where the modal is called)
+
+const handleSave = async (data, listingId) => {
+  // data parameter is now the FormData object from the modal
+  
+  if (listingId) { 
+    // This is an UPDATE operation
+    
+    // Check if the data is FormData (meaning it might contain a file)
+    if (data instanceof FormData) {
+      // 1. FORMDATA UPDATE
+      // The updateListing function MUST handle FormData and correctly send the PUT/PATCH request
+      await updateListing(listingId, data);
+      
+    } else {
+      // 2. REGULAR OBJECT UPDATE (Fallback, likely unused now)
+      await updateListing(listingId, data);
+    }
+  } else {
+    // This is a CREATE operation (assuming data is also FormData from Create modal)
+    // You should ensure your CreateListing component also uses FormData
+    await addListing(data);
+  }
+  
+  setOpen(false);
+};
+
+
 
   const handleBulkEdit = async (updates) => {
     for (const id of selectedIds) {

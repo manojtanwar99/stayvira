@@ -129,7 +129,8 @@ const Navbar = () => {
                 </div>
 
                 {/* User Menu - Desktop */}
-                <div className="hidden sm:flex items-center space-x-3 bg-blue-700/30 rounded-full px-3 py-1.5">
+                <div onClick={() => navigate('/user')}
+                className="hidden sm:flex items-center space-x-3 bg-blue-700/30 rounded-full px-3 py-1.5">
                   <UserCircleIcon className="w-8 h-8 text-blue-100" />
                   <div className="hidden lg:block">
                     <p className="text-sm font-medium">

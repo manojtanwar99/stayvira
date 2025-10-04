@@ -6,6 +6,11 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/solid";
 
+// Define the base URL for the images. 
+// NOTE: Adjust this if your frontend runs on a different port/domain than your backend.
+// Example: If backend is on http://localhost:5000
+const IMAGE_BASE_URL = "http://localhost:5000"; // Assuming the image path is relative to the root/proxy is set up
+
 const AdminTable = ({
   listings = [],
   onEdit,
@@ -18,7 +23,7 @@ const AdminTable = ({
   onSelectAll,
   pageSize = 5,
 }) => {
-  // ---------------- STATE ----------------
+  // ... (STATE, FILTER, PAGINATION logic remains the same) ...
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
 
@@ -66,6 +71,13 @@ const AdminTable = ({
     );
   }
 
+  // --- HELPER FUNCTION TO GET IMAGE URL ---
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    return `${IMAGE_BASE_URL}/${imagePath}`; 
+};
+
+
   return (
     <div className="w-full bg-gray-800 rounded-lg shadow-xl overflow-hidden">
       {/* Filter/Search */}
@@ -97,6 +109,10 @@ const AdminTable = ({
                   onChange={onSelectAll}
                   className="cursor-pointer bg-gray-600 border-gray-500 rounded text-blue-500 focus:ring-blue-500"
                 />
+              </th>
+              {/* 🚨 ADDED IMAGE COLUMN HEADER 🚨 */}
+              <th className="p-4 text-left text-xs font-medium text-gray-300 w-24">
+                Image
               </th>
               <th
                 className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none whitespace-nowrap"
@@ -139,6 +155,20 @@ const AdminTable = ({
                     className="cursor-pointer bg-gray-600 border-gray-500 rounded text-blue-500 focus:ring-blue-500"
                   />
                 </td>
+                
+                {/* 🚨 ADDED IMAGE COLUMN DATA 🚨 */}
+                <td className="p-4">
+                  {l.image ? (
+                    <img
+                      src={getImageUrl(l.image)}
+                      alt={l.title}
+                      className="w-16 h-10 object-cover rounded-md"
+                    />
+                  ) : (
+                    <span className="text-gray-500 text-xs">No Img</span>
+                  )}
+                </td>
+
                 <td className="p-4 text-sm font-medium text-gray-100">
                   {l.title}
                 </td>
@@ -175,52 +205,63 @@ const AdminTable = ({
         {paginatedListings.map((l) => (
           <div
             key={l._id}
-            className={`bg-gray-700 rounded-lg shadow p-4 border transition-all duration-200 ${
+            className={`bg-gray-700 rounded-lg shadow border transition-all duration-200 ${
               selectedIds.includes(l._id)
                 ? "ring-2 ring-blue-500 border-blue-600"
                 : "border-gray-600 hover:border-gray-500"
             }`}
           >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(l._id)}
-                  onChange={() => onSelect(l._id)}
-                  className="cursor-pointer bg-gray-800 border-gray-500 rounded text-blue-500 focus:ring-blue-500"
-                />
-                <h3 className="text-lg font-semibold text-gray-50">{l.title}</h3>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => onEdit(l)}
-                  className="p-1 rounded-full hover:bg-yellow-500/20 transition-colors"
-                  title="Edit Listing"
-                >
-                  <PencilIcon className="w-5 h-5 text-yellow-500" />
-                </button>
-                <button
-                  onClick={() => onDelete(l._id)}
-                  className="p-1 rounded-full hover:bg-red-500/20 transition-colors"
-                  title="Delete Listing"
-                >
-                  <TrashIcon className="w-5 h-5 text-red-500" />
-                </button>
-              </div>
+            {/* 🚨 ADDED IMAGE TO MOBILE CARD VIEW 🚨 */}
+            {l.image && (
+              <img
+                src={getImageUrl(l.image)}
+                alt={l.title}
+                className="w-full h-40 object-cover rounded-t-lg mb-3"
+              />
+            )}
+            
+            <div className="p-3">
+                <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center space-x-2">
+                    <input
+                    type="checkbox"
+                    checked={selectedIds.includes(l._id)}
+                    onChange={() => onSelect(l._id)}
+                    className="cursor-pointer bg-gray-800 border-gray-500 rounded text-blue-500 focus:ring-blue-500"
+                    />
+                    <h3 className="text-lg font-semibold text-gray-50">{l.title}</h3>
+                </div>
+                <div className="flex space-x-2">
+                    <button
+                    onClick={() => onEdit(l)}
+                    className="p-1 rounded-full hover:bg-yellow-500/20 transition-colors"
+                    title="Edit Listing"
+                    >
+                    <PencilIcon className="w-5 h-5 text-yellow-500" />
+                    </button>
+                    <button
+                    onClick={() => onDelete(l._id)}
+                    className="p-1 rounded-full hover:bg-red-500/20 transition-colors"
+                    title="Delete Listing"
+                    >
+                    <TrashIcon className="w-5 h-5 text-red-500" />
+                    </button>
+                </div>
+                </div>
+                <p className="text-sm text-gray-300">
+                <span className="font-medium text-gray-200">Location:</span>{" "}
+                {l.location || "-"}
+                </p>
+                <p className="text-sm text-green-400">
+                <span className="font-medium text-gray-200">Price:</span>{" "}
+                {l.price || "-"}
+                </p>
             </div>
-            <p className="text-sm text-gray-300">
-              <span className="font-medium text-gray-200">Location:</span>{" "}
-              {l.location || "-"}
-            </p>
-            <p className="text-sm text-green-400">
-              <span className="font-medium text-gray-200">Price:</span>{" "}
-              {l.price || "-"}
-            </p>
           </div>
         ))}
       </div>
 
-      {/* --- PAGINATION CONTROLS --- */}
+      {/* --- PAGINATION CONTROLS (remains the same) --- */}
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-t border-gray-700 sm:px-6 rounded-b-lg">
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <p className="text-sm text-gray-300">
