@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// --- POST/CREATE LISTING (Correctly uses Multer and saves relative path) ---
+// --- POST/CREATE LISTING (Updated with all property fields) ---
 router.post('/', (req, res) => {
     // Multer middleware runs first
     upload(req, res, async (err) => {
@@ -26,7 +26,20 @@ router.post('/', (req, res) => {
         }
         
         try {
-            const { title, description, price } = req.body;
+            const { 
+                title, 
+                description, 
+                price, 
+                location,
+                bedrooms,
+                bathrooms,
+                area,
+                propertyType,
+                status,
+                yearBuilt,
+                parking,
+                furnished
+            } = req.body;
             
             // CORRECT: Saves the publicly accessible relative path
             const imagePath = req.file ? `uploads/${req.file.filename}` : null; 
@@ -35,6 +48,15 @@ router.post('/', (req, res) => {
                 title,
                 description,
                 price,
+                location,
+                bedrooms,
+                bathrooms,
+                area,
+                propertyType,
+                status,
+                yearBuilt,
+                parking,
+                furnished,
                 image: imagePath 
             });
 
@@ -48,7 +70,7 @@ router.post('/', (req, res) => {
 });
 
 
-// --- PUT/UPDATE LISTING (MODIFIED TO USE MULTER AND HANDLE IMAGE UPDATE) ---
+// --- PUT/UPDATE LISTING (Already handles all fields with spread operator) ---
 router.put("/:id", (req, res) => {
     // 🚨 1. Wrap the logic in the Multer middleware to process FormData/file 🚨
     upload(req, res, async (err) => {
@@ -61,6 +83,7 @@ router.put("/:id", (req, res) => {
         const listingId = req.params.id;
         
         // 🚨 2. Collect all text fields from req.body 🚨
+        // The spread operator already handles all new fields automatically
         const updateData = { ...req.body };
 
         // 🚨 3. If a new file was uploaded, add the new path 🚨

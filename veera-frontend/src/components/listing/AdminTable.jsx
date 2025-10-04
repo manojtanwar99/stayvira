@@ -116,13 +116,13 @@ const AdminTable = ({
                 Image
               </th>
               <th
-                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none whitespace-nowrap"
+                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none w-24"
                 onClick={() => onSort("title")}
               >
                 Title {renderSortIcon("title")}
               </th>
               <th
-                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none whitespace-nowrap"
+                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none w-24"
                 onClick={() => onSort("location")}
               >
                 Location {renderSortIcon("location")}
@@ -133,6 +133,34 @@ const AdminTable = ({
               >
                 Price {renderSortIcon("price")}
               </th>
+             
+               <th
+                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none w-24"
+                onClick={() => onSort("bedrooms")}
+              >
+                bedrooms {renderSortIcon("bedrooms")}
+              </th>
+              <th
+                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none w-24"
+                onClick={() => onSort("area")}
+              >
+                area {renderSortIcon("area")}
+              </th>
+              <th
+                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none w-24"
+                onClick={() => onSort("bathrooms")}
+              >
+                bathrooms {renderSortIcon("bathrooms")}
+              </th>
+              <th
+                className="p-4 text-left text-xs font-medium text-gray-300 cursor-pointer select-none w-24"
+                onClick={() => onSort("description")}
+              >
+                description {renderSortIcon("description")}
+              </th>
+
+
+
               <th className="p-4 text-left text-xs font-medium text-gray-300 w-32">
                 Actions
               </th>
@@ -170,15 +198,33 @@ const AdminTable = ({
                   )}
                 </td>
 
-                <td className="p-4 text-sm font-medium text-gray-100">
+                <td className="p-4 text-sm text-green-400 font-semibold">
                   {l.title}
                 </td>
-                <td className="p-4 text-sm text-gray-300">
+                <td className="p-4 text-sm text-green-400 font-semibold">
                   {l.location || "-"}
                 </td>
                 <td className="p-4 text-sm text-green-400 font-semibold">
                   {l.price || "-"}
                 </td>
+                
+                <td className="p-4 text-sm text-green-400 font-semibold">
+                  {l.bedrooms || "-"}
+                </td>
+                <td className="p-4 text-sm text-green-400 font-semibold">
+                  {l.area || "-"}
+                </td>
+                <td className="p-4 text-sm text-green-400 font-semibold">
+                  {l.bathrooms || "-"}
+                </td>
+                <td className="p-4 text-sm text-green-400 font-semibold">
+                  {l.description || "-"}
+                </td>
+
+
+
+
+
                 <td className="p-4 text-sm flex space-x-2">
                   <button
                     onClick={() => onEdit(l)}
